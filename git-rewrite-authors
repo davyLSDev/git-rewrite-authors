@@ -59,6 +59,8 @@ def parse_args():
                          formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-l', '--list', action='store_true',
                         help="List all authors and committers")
+    parser.add_argument('-f', '--file', nargs=1,
+    					help="Process file of authors and committers to be changed. NOT WORKING YET!")
     parser.add_argument('-w', '--rewrite', nargs=2,
                         metavar=('old', 'new'), type=str,
                         help="Rewrite authors and committers")
@@ -70,6 +72,8 @@ def main(args):
 
     if args.list:
         list_git_authors()
+    elif args.file:
+    	print "Feature not finished yet"
     elif args.rewrite:
         old_name, old_email = parse_author_arg(args.rewrite[0])
         new_name, new_email = parse_author_arg(args.rewrite[1])
