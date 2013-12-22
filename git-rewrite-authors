@@ -73,7 +73,7 @@ def main(args):
     if args.list:
         list_git_authors()
     elif args.file:
-    	print "Feature not finished yet"
+    	rewrite_git_authors_from_file(args.file[0])    	
     elif args.rewrite:
         old_name, old_email = parse_author_arg(args.rewrite[0])
         new_name, new_email = parse_author_arg(args.rewrite[1])
@@ -82,7 +82,58 @@ def main(args):
         rewrite_git_committer(old_name, old_email, new_name, new_email)
     else:
         print "Doing nothing.  Invoke with -h for help."
-
+        
+def rewrite_git_authors_from_file(filename):
+	"""Get the and process git author history revision line by line"""
+    	print "Feature not finished yet"
+    	line_num = 0
+    	print "Now attempting to open the file", filename
+    	authors = open(filename,'r')
+    	for line in authors.readlines():
+    		line_num += 1
+    		print "Now processing ", line_num, line
+    		old_name, old_email, new_name, new_email = parse_file_line(line)
+    		print "old name:", old_name, "and old email:", old_email
+    		print "new name:", new_name, "and new email:", new_email
+    		
+    		rewrite_git_author(old_name, old_email, new_name, new_email)  		
+    	authors.close();
+    	print "You have rewritten ", line_num, "authors / committers in git history!"
+	        
+def parse_file_line(given_line):
+	"""Parse out old name(s), old email, new names, new email from the text file"""
+	authorTokens = given_line.split( )
+	numTokens = len(authorTokens)
+	""" print "There are", numTokens, " tokens in this line"
+	print authorTokens """
+	
+	oldName = ""
+	oldEmail = ""
+	newName = ""
+	newEmail = ""
+	
+	if numTokens >= 4:
+		newName = authorTokens[numTokens-3] + " " + authorTokens[numTokens-2]
+		newEmail = authorTokens[numTokens-1]
+	
+	if numTokens == 6:
+		oldName = authorTokens[0] + " " + authorTokens[1]
+		oldEmail = authorTokens[2]
+		
+	elif numTokens == 4:
+		if authorTokens[0][0] == "<":
+			oldEmail = authorTokens[0]
+		else:
+			oldName = authorTokens[0]
+			
+	elif numTokens == 5:
+		oldName = authorTokens[0]
+		if authorTokens[1][0] == "<":
+			oldEmail = authorTokens[1]
+		else:
+			oldName = oldName + " " + authorTokens[1]
+			
+	return oldName, oldEmail, newName, newEmail
 
 def parse_author_arg(arg):
     """Parse name/email argument"""
